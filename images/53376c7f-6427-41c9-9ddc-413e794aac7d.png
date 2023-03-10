@@ -1,0 +1,92 @@
+# axios
+## 依赖引入
+> 安装axios依赖
+```bash
+npm install axios -S
+```
+> main.js 导入依赖并全局挂载
+```js
+import axios from 'axios'
+Vue.prototype.$http = axios
+```
+## 封装axios
+> http.js  
+> 路径：@/utils/http.js
+```js
+import axios from 'axios'
+// 定义axios请求默认根路径
+const request = axios.create({
+    baseURL:'http://127.0.0.1:8000'
+})
+
+export default request
+```
+> 创建api.js  
+> 路径：@/utils/api.js
+```js
+import request from '@/utils/http.js'
+// url = "https://api.vvhan.com/api/view?type=json"
+const sjpic = function(params){
+    return request.get('/view',{
+        params:params
+    })
+}
+export default {
+    sjpic
+}
+```
+> 模块调用方法
+```js
+import $api from '@/utils/api.js'
+......方法
+axios(){
+    let par = {type:'json'}
+    $api.sjpic(par).then(res =>{
+    this.picsrc = res.data.imgurl
+    console.log(res.data);
+    }).catch(err =>{
+    console.log("请求失败！原因是：",err);
+    })
+}
+```
+
+# Component组件
+> 定义子组件  
+> 路径：@/Component/MyHeader.vue  
+```html
+<template>
+    <div id="myheader">这是MyHeader组件,你传入的参数为：{{msg}}
+        <button @click="click">控制台查看打印</button>
+    </div>
+</template>
+```
+```js
+export default {
+    name:"MyHeader",
+    methods:{
+        click(){
+            // 给父组件发送消息
+            this.$emit("emit","666")
+        }
+    },
+    props:{
+        msg:String
+    }
+}
+```
+> 使用方法  
+```html
+<MyHeader msg="哈哈哈" @emit="emitclick"/>
+```
+```js
+export default {
+    methods:{
+       emitclick(res){
+        conlose.log("子组件发来消息：",res)
+       } 
+    }
+}
+```
+
+
+
